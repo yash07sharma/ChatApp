@@ -9,16 +9,21 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
 import com.example.chatapp.Models.Message;
 import com.example.chatapp.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 public class MessageView extends LinearLayout {
     Message message;
     String sender;
     TextView messageText;
     CardView messageCard;
+    TextView tick;
     public MessageView(Context context, Message message, String sender) {
         super(context);
         this.message = message;
@@ -45,20 +50,41 @@ public class MessageView extends LinearLayout {
 
         messageText = findViewById(R.id.messageText);
         messageCard = findViewById(R.id.messageCard);
+        tick = findViewById(R.id.tick);
         Log.d("ChatDebug","this.sender : "+this.sender);
         Log.d("ChatDebug","message.sender : "+message.getSender());
         if(this.sender.equals(message.getSender())) {
             LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            param.gravity = Gravity.RIGHT;
+            param.gravity = Gravity.END;
             messageCard.setLayoutParams(param);
-            messageCard.setCardBackgroundColor(Color.parseColor("#673AB7"));
+            messageCard.setBackground(getResources().getDrawable(R.drawable.sender_message_background,null));
+//            messageCard.setCardBackgroundColor(Color.parseColor("#673AB7"));
             messageText.setTextColor(Color.WHITE);
+            setSeenListener();
         }
         else {
+            tick.setVisibility(View.GONE);
             LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            param.gravity = Gravity.LEFT;
+            param.gravity = Gravity.START;
+            messageCard.setBackground(getResources().getDrawable(R.drawable.receiver_message_background,null));
             messageCard.setLayoutParams(param);
         }
         messageText.setText(message.getText());
+    }
+
+    public void setSeenListener(){
+        message.seenRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue().toString().equals("true")) {
+                    message.setSeen(true);
+                    Log.d("MessageSeen", "Message : "+message.getText()+"Seen : " + message.isSeen());
+                    tick.setTextColor(Color.parseColor("#FF31BBFA"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
     }
 }

@@ -79,6 +79,7 @@ public class ShowUsers extends AppCompatActivity {
                 Intent intent = new Intent(ShowUsers.this, ChatActivity.class);
                 intent.putExtra("sender",current_user);
                 intent.putExtra("receiver",user);
+                intent.putExtra("phone",current_user.getPhone());
                 startActivity(intent);
             }
         });

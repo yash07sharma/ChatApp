@@ -19,6 +19,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:padding="10dp">
 
             <TextView
@@ -27,9 +28,21 @@
                 android:layout_height="wrap_content"
                 android:text="Message Text"
                 android:textSize="14dp"
+                android:paddingRight="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tick"
+                android:layout_gravity="end"
+                android:textSize="10dp"
+                android:text="@string/tick"
+                android:textStyle="bold"
+                android:textColor="#D1D1D1"
+                />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

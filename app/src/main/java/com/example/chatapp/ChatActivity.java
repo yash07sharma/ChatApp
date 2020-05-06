@@ -28,6 +28,7 @@ public class ChatActivity extends AppCompatActivity {
     private User receiver;
     private TextView name;
     private ImageView status;
+    private String phone;
     private TextView messageText;
     private TextView send;
     private LinearLayout listOfMessages;
@@ -78,6 +79,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void addMessage(Message message){
+        message.setSeenRef(conversationRef);
         MessageView messageView= new MessageView(this,message,sender.getPhone());
         listOfMessages.addView(messageView);
     }
@@ -97,6 +99,8 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 else
                     conversationRef = parentRef.child(conversationID2).getRef();
+                Log.d("conversationRef",conversationRef.toString());
+
                 initConversationListener();
             }
             @Override
@@ -111,6 +115,13 @@ public class ChatActivity extends AppCompatActivity {
                 Log.d("ChatDebug","conversation data : "+dataSnapshot.getKey()+" : "+dataSnapshot.getValue().toString());
                 Log.d("ChatDebug","conversation listener : count : "+dataSnapshot.getChildrenCount());
                 Message mess = dataSnapshot.getValue(Message.class);
+                Log.d("conversationRef","mess : "+mess.getText()+" : receiver phone : "+mess.getReceiver()+" : phone : "+sender.getPhone());
+                if(mess.getReceiver().equals(sender.getPhone()))
+                {
+                    conversationRef.child(String.valueOf(mess.getTime())).child("seen").getRef().setValue(true);
+                    Log.d("conversationRef","receiver message : "+mess.getText()+ " : conversationRef : "+conversationRef.child(String.valueOf(mess.getTime())).child("seen").getRef().toString());
+                }
+
                 addMessage(mess);
                 messageCount++;
 
